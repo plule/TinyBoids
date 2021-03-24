@@ -19,9 +19,9 @@ public class SpawnerCreatesBoidsSystem : SystemBase
         int boidCount = _boidsQuery.CalculateEntityCount();
         var prototype = GetSingletonEntity<SpawnerTag>();
 
-        Entities.ForEach((in BoidSettingsComponentData settings) =>
+        Entities.ForEach((in BoidSettingsComponentData settings, in BoidSpawnerComponentData spawnerData) =>
         {
-            int boidNumberToSpawn = 1000 - boidCount;
+            int boidNumberToSpawn = spawnerData.EntityCount - boidCount;
             var random = new Random(1);
             for (int i = 0; i < boidNumberToSpawn; ++i)
             {
@@ -30,7 +30,7 @@ public class SpawnerCreatesBoidsSystem : SystemBase
 
                 cmdBuffer.AddComponent(e, new Translation
                 {
-                    Value = random.NextFloat3()
+                    Value = random.NextFloat3() * spawnerData.Radius
                 });
                 cmdBuffer.AddComponent(e, new Rotation
                 {
@@ -39,7 +39,7 @@ public class SpawnerCreatesBoidsSystem : SystemBase
                 cmdBuffer.AddComponent(e, new MovementComponentData
                 {
                     TargetDirection = quaternion.identity,
-                    LinearVelocity = new float3(i, 0, 0)
+                    LinearVelocity = new float3(0, 0, 0)
                 });
                 cmdBuffer.AddComponent(e, new BoidTag());
             }
