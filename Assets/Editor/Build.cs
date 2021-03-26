@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using UnityEditor;
 using Unity.Build;
 using UnityEngine;
@@ -17,12 +18,9 @@ namespace Assets.Editor
 
             Debug.Log($"Building {buildConfiguration.name}");
             var buildResult = buildConfiguration.Build();
-            if (!buildResult.Succeeded)
-            {
-                Debug.LogError(buildResult.Message);
-                throw buildResult.Exception;
-            }
-            Debug.Log("Success");
+            buildResult.LogResult();
+            if (buildResult.Failed)
+                throw new Exception("Build Failed.");
         }
     }
 }
